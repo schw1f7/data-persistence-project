@@ -11,7 +11,7 @@ public class TopTen : MonoBehaviour
     {
         DataManager.Instance.LoadSave();
         var top10Scores = DataManager.Instance.GetTop10Scores();
-        for (var i = 1; i < top10Scores.Count; i++)
+        for (var i = 1; i < top10Scores.Count + 1; i++)
         {
             var score = top10Scores[i - 1];
             topTenScoresText.text += $"#{i} {score.Name} : {score.Score}\n";

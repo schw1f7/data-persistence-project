@@ -90,7 +90,6 @@ public class MainManager : MonoBehaviour
         }
         else if (m_GameOver)
         {
-            DataManager.Instance.SaveScore(new DataManager.ScoreData { Name = DataManager.Instance.GetName(), Score = m_Points });
             if (m_LaunchAction.WasPressedThisFrame()) // MIGRATED: was Input.GetKeyDown(KeyCode.Space)
             {
                 SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
@@ -109,6 +108,6 @@ public class MainManager : MonoBehaviour
         m_GameOver = true;
         GameOverText.SetActive(true);
 
-        // TODO: Save score and name
+        DataManager.Instance.SaveScore(new DataManager.ScoreData { Name = DataManager.Instance.GetName(), Score = m_Points });
     }
 }
