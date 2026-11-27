@@ -11,11 +11,11 @@ public class DataManager : MonoBehaviour
 {
     public static DataManager Instance { get; private set; }
 
-    private SaveData saveData;
-
-    public string Name;
-
-    public int Score;
+    [SerializeField]
+    private SaveData saveData = new SaveData
+    {
+        PreviousScores = new List<ScoreData>()
+    };
 
     void Awake()
     {
@@ -31,7 +31,7 @@ public class DataManager : MonoBehaviour
 
 
     [System.Serializable]
-    class SaveData
+    public class SaveData
     {
         public string Name;
         public ScoreData HighScoreData;
@@ -40,7 +40,7 @@ public class DataManager : MonoBehaviour
     }
 
     [System.Serializable]
-    class ScoreData
+    public class ScoreData
     {
         public string Name;
 
@@ -61,7 +61,23 @@ public class DataManager : MonoBehaviour
         }
     }
 
-    public void SaveGame()
+    public string GetName()
+    {
+        return saveData.Name;
+    }
+
+    public void SetName(string name)
+    {
+        saveData.Name = name;
+    }
+
+    public void SaveScore(ScoreData score)
+    {
+        saveData.PreviousScores.Add(score);
+        SaveGame();
+    }
+
+    private void SaveGame()
     {
         // Take the name and score and append it to the list of scores.
 
@@ -69,26 +85,15 @@ public class DataManager : MonoBehaviour
         File.WriteAllText(Application.persistentDataPath + saveSuffix, json);
     }
 
-    public void SaveName(string name)
-    {
-        // Only save if there is a name
-        if (!string.IsNullOrEmpty(name))
-        {
-            saveData.Name = name;
-            string json = JsonUtility.ToJson(saveData);
-            File.WriteAllText(Application.persistentDataPath + saveSuffix, json);
-        }
-    }
-
-    public string GetName()
-    {
-        return !string.IsNullOrEmpty(Name) ? Name : string.Empty;
-    }
-
-    public Tuple<string, int> GetHighScore()
+    public ScoreData GetHighScore()
     {
         // Get the highest score
         var highScore = saveData.PreviousScores.OrderByDescending(x => x.Score).FirstOrDefault();
-        return new Tuple<string, int>(highScore.Name, highScore.Score);
+        return highScore;
+    }
+
+    public List<ScoreData> GetTop10Scores()
+    {
+        return saveData.PreviousScores.OrderByDescending(x => x.Score).Take(10).ToList();
     }
 }
